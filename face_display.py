@@ -7,3 +7,6 @@ oled = SSD1306_I2C(128, 64, i2c)
 
 def set_face():
     pass
+
+def off_face():
+    pass

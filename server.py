@@ -9,6 +9,11 @@ import socket
 
 from dd_motor import move_bot
 
+rl = machine.Pin(3,machine.Pin.OUT)
+yl = machine.Pin(4,machine.Pin.OUT)
+gl = machine.Pin(5,machine.Pin.OUT)
+
+
 # Set country to avoid possible errors
 rp2.country('PL')
 
@@ -43,12 +48,24 @@ while timeout > 0:
 
 # Define blinking function for onboard LED to indicate error codes    
 def blink_onboard_led(num_blinks):
-    led = machine.Pin('LED', machine.Pin.OUT)
-    for i in range(num_blinks):
-        led.on()
-        time.sleep(.2)
-        led.off()
-        time.sleep(.2)
+    if num_blinks < 0:
+        for i in range(5):
+            rl.value(1)
+            time.sleep(.2)
+            rl.value(0)
+            time.sleep(.2)
+    elif num_blinks < 3:
+        for i in range(5):
+            yl.value(1)
+            time.sleep(.2)
+            yl.value(0)
+            time.sleep(.2)
+    else:
+        for i in range(5):
+            gl.value(1)
+            time.sleep(.2)
+            gl.value(0)
+            time.sleep(.2)
     
 # Handle connection error
 # Error meanings
@@ -110,8 +127,18 @@ def server_handle():
         return True
         
     except OSError as e:
+        print(e)
         cl.close()
         print('Connection closed')
+        rl.value(1)
+        time.sleep(2)
+        rl.value(0)
+        return False
+    
+    except:
+        rl.value(1)
+        time.sleep(2)
+        rl.value(0)
         return False
 
 # Make GET request
