@@ -118,11 +118,10 @@ def server_handle():
         dd_stop = r.find('?dd=stop')
         dd_left = r.find('?dd=left')
         dd_right = r.find('?dd=right')
+        turn_off = r.find('?dd=off')
         
-        print(dd_go)
-        print(dd_stop)
-        print(dd_left)
-        print(dd_right)
+        if turn_off == 10:
+            raise KeyboardInterrupt
         
         if dd_go == 10:
             dd_go = True
@@ -163,7 +162,7 @@ def server_handle():
         rl.value(1)
         time.sleep(2)
         rl.value(0)
-        oled.text(e)
+        oled.text(e,0,0)
         oled.show()
         return False
 
