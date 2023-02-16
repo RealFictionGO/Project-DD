@@ -8,6 +8,7 @@ from secrets import secrets
 import socket
 
 from dd_motor import move_bot
+from face_display import oled
 
 rl = machine.Pin(3,machine.Pin.OUT)
 yl = machine.Pin(4,machine.Pin.OUT)
@@ -117,6 +118,23 @@ def server_handle():
         dd_stop = r.find('?dd=stop')
         dd_left = r.find('?dd=left')
         dd_right = r.find('?dd=right')
+        
+        print(dd_go)
+        print(dd_stop)
+        print(dd_left)
+        print(dd_right)
+        
+        if dd_go == 10:
+            dd_go = True
+            
+        elif dd_left == 10:
+            dd_left = True
+            
+        elif dd_right == 10:
+            dd_right = True
+            
+        elif dd_stop == 10:
+            dd_stop = True
 
         move_bot(dd_go, dd_stop, dd_left, dd_right)
             
@@ -135,10 +153,18 @@ def server_handle():
         rl.value(0)
         return False
     
-    except:
+    except KeyboardInterrupt:
+        yl.value(1)
+        time.sleep(2)
+        yl.value(0)
+        return False
+    
+    except Exception as e:
         rl.value(1)
         time.sleep(2)
         rl.value(0)
+        oled.text(e)
+        oled.show()
         return False
 
 # Make GET request
