@@ -7,7 +7,7 @@ import time
 from secrets import secrets
 import socket
 
-from dd_motor import move_bot
+from dd_motor import move_bot, ENA, ENB
 from face_display import oled
 
 rl = machine.Pin(3,machine.Pin.OUT)
@@ -114,33 +114,42 @@ def server_handle():
         # print(r)
         
         r = str(r)
+        
+        forw = True
+        moves = []
+        
         dd_go = r.find('?dd=go')
-        dd_stop = r.find('?dd=stop')
         dd_left = r.find('?dd=left')
         dd_right = r.find('?dd=right')
+        
+        dd_bgo = r.find('?dd=bgo')
+        dd_bleft = r.find('?dd=bleft')
+        dd_bright = r.find('?dd=bright')
+        
+        dd_stop = r.find('?dd=stop')
         turn_off = r.find('?dd=off')
         
         if turn_off == 10:
             raise KeyboardInterrupt
         
-        if dd_go == 10:
-            dd_go = True
-            
-        elif dd_left == 10:
-            dd_left = True
-            
-        elif dd_right == 10:
-            dd_right = True
-            
-        elif dd_stop == 10:
-            dd_stop = True
+        if dd_bgo == 10 or dd_bleft == 10 or dd_bright == 10:
+            forw = False
+            moves = [dd_bgo, dd_stop, dd_bleft, dd_bright]
+        else:
+            moves = [dd_go, dd_stop, dd_left, dd_right]
 
-        move_bot(dd_go, dd_stop, dd_left, dd_right)
-            
+        for i in range(len(moves)):
+            if moves[i] < 0:
+                moves[i] = False
+            else:
+                moves[i] = True
+                 
         response = get_html('index.html')
         cl.send('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n')
         cl.send(response)
         cl.close()
+        
+        move_bot(moves[0], moves[1], moves[2], moves[3], forw)
         return True
         
     except OSError as e:
@@ -150,12 +159,16 @@ def server_handle():
         rl.value(1)
         time.sleep(2)
         rl.value(0)
+        ENA.low()
+        ENB.low()
         return False
     
     except KeyboardInterrupt:
         yl.value(1)
         time.sleep(2)
         yl.value(0)
+        ENA.low()
+        ENB.low()
         return False
     
     except Exception as e:
@@ -164,6 +177,8 @@ def server_handle():
         rl.value(0)
         oled.text(e,0,0)
         oled.show()
+        ENA.low()
+        ENB.low()
         return False
 
 # Make GET request
