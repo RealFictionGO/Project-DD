@@ -31,7 +31,7 @@ def move_bot(go, stop, left, right, forw):
             ENB.high()
             set_face("happy")
         elif left == True:
-            ldc.value(0)
+            ldc.value(1)
             ldc2.value(0)
             rdc.value(0)
             rdc2.value(1)
@@ -41,7 +41,7 @@ def move_bot(go, stop, left, right, forw):
         elif right == True:
             ldc.value(0)
             ldc2.value(1)
-            rdc.value(0)
+            rdc.value(1)
             rdc2.value(0)
             ENA.high()
             ENB.low()
@@ -60,7 +60,7 @@ def move_bot(go, stop, left, right, forw):
             set_face("happy")
         elif left == True:
             ldc.value(0)
-            ldc2.value(0)
+            ldc2.value(1)
             rdc.value(1)
             rdc2.value(0)
             ENA.low()
@@ -70,7 +70,7 @@ def move_bot(go, stop, left, right, forw):
             ldc.value(1)
             ldc2.value(0)
             rdc.value(0)
-            rdc2.value(0)
+            rdc2.value(1)
             ENA.high()
             ENB.low()
             set_face("right")
